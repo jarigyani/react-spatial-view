@@ -2,7 +2,8 @@
 
 A React component library that provides a powerful and flexible spatial view with smooth zooming and panning capabilities.
 
-[Demo(CodeSandbox)](https://codesandbox.io/p/devbox/jlr5gz)
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/Jarigyani/react-spatial-view)
+[![Demo(Stackblitz)](https://developer.stackblitz.com/img/open_in_stackblitz_small.svg)](https://stackblitz.com/edit/vitejs-vite-rcw5ovqb?file=src%2FApp.tsx)
 
 ## Features
 
