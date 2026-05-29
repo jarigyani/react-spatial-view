@@ -403,6 +403,7 @@ export const SpatialView: React.FC<SpatialViewProps> = ({
 
   useEffect(() => {
     const container = containerRef.current;
+    /* v8 ignore next -- React sets DOM refs before this effect runs. */
     if (!container) return;
 
     container.addEventListener("wheel", handleWheel, { passive: false });
