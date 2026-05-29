@@ -2,17 +2,18 @@
   "compilerOptions": {
     "importHelpers": true,
     "noEmitHelpers": true,
-    "target": "ES5",
+    "rootDir": "src",
+    "target": "ES2015",
     "module": "ESNext",
     "declaration": true,
     "declarationDir": "dist/types",
     "outDir": "dist",
     "jsx": "react",
     "strict": true,
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true
+    "forceConsistentCasingInFileNames": true,
   },
-  "include": ["src"]
+  "include": ["src"],
 }
