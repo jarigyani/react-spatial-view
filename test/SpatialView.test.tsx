@@ -660,6 +660,70 @@ describe("SpatialView", () => {
 		expect(positionRef.current).toEqual({ x: 0, y: -75 });
 	});
 
+	it("jumps using the registered content ref without depending on inline style selectors", () => {
+		vi.useFakeTimers();
+		vi.stubGlobal("DOMMatrix", TestDOMMatrix);
+		const setScale = vi.fn();
+		const setPosition = vi.fn();
+		const scaleRef = { current: 1 };
+		const positionRef = { current: { x: 0, y: 0 } };
+		const contentRef: React.RefObject<HTMLDivElement | null> = {
+			current: null,
+		};
+
+		const HookConsumer = () => {
+			const { jumpToElement } = useSpatialView();
+			return (
+				<div ref={contentRef}>
+					<button
+						type="button"
+						onClick={(event) =>
+							jumpToElement(event.currentTarget, { padding: 10 })
+						}
+					>
+						Target
+					</button>
+				</div>
+			);
+		};
+
+		render(
+			<SpatialViewContext.Provider
+				value={{
+					scale: 1,
+					setScale,
+					scaleRef,
+					position: { x: 0, y: 0 },
+					setPosition,
+					positionRef,
+					isZooming: false,
+					setIsZooming: vi.fn(),
+					isDragging: false,
+					setIsDragging: vi.fn(),
+					contentRef,
+					zoomDuration: 60,
+					setContext: vi.fn(),
+				}}
+			>
+				<section>
+					<HookConsumer />
+				</section>
+			</SpatialViewContext.Provider>,
+		);
+
+		const target = screen.getByText("Target");
+		const content = target.parentElement as HTMLElement;
+		const container = content.parentElement as HTMLElement;
+		mockRect(container, 0, 0, 200, 100);
+		mockRect(content, 0, 0, 300, 300);
+		mockRect(target, 10, 20, 20, 10);
+
+		fireEvent.click(target);
+
+		expect(setScale).toHaveBeenCalledWith(5);
+		expect(setPosition).toHaveBeenCalledWith({ x: 0, y: -75 });
+	});
+
 	it("throws when the hook receives an undefined context", () => {
 		const HookConsumer = () => {
 			useSpatialView();

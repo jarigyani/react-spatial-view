@@ -6,55 +6,19 @@ import React, {
   useState,
 } from "react";
 import { useSpatialView } from "../hooks/useSpatialView";
+import {
+  calculateConstrainedPosition,
+  calculateMousePosition,
+  calculateNewScale,
+  calculateZoomPosition,
+  type Position,
+} from "../spatialMath";
 
-type Position = {
-  x: number;
-  y: number;
-};
-
-export const calculateNewScale = (
-  currentScale: number,
-  deltaY: number,
-  sensitivity: number,
-  minScale: number,
-  maxScale: number
-): number => {
-  return deltaY > 0
-    ? Number(
-        Math.max(minScale, currentScale - sensitivity * currentScale).toFixed(3)
-      )
-    : Number(
-        Math.min(maxScale, currentScale + sensitivity * currentScale).toFixed(3)
-      );
-};
-
-export const calculateMousePosition = (
-  clientX: number,
-  clientY: number,
-  rect: DOMRect,
-  currentPosition: Position,
-  scale: number
-): { currentMouseX: number; currentMouseY: number } => {
-  const mouseX = clientX - rect.left;
-  const mouseY = clientY - rect.top;
-  return {
-    currentMouseX: (mouseX - currentPosition.x) / scale,
-    currentMouseY: (mouseY - currentPosition.y) / scale,
-  };
-};
-
-export const calculateZoomPosition = (
-  mouseX: number,
-  mouseY: number,
-  currentMouseX: number,
-  currentMouseY: number,
-  newScale: number
-): Position => {
-  return {
-    x: mouseX - currentMouseX * newScale,
-    y: mouseY - currentMouseY * newScale,
-  };
-};
+export {
+  calculateMousePosition,
+  calculateNewScale,
+  calculateZoomPosition,
+} from "../spatialMath";
 
 type SpatialViewProps = {
   zoomSensitivity?: number;
@@ -152,27 +116,7 @@ export const SpatialView: React.FC<SpatialViewProps> = ({
     (pos: Position, scl: number): Position => {
       const bounds = calculateBounds();
       if (!bounds || !constrainPan) return pos;
-      const result = { ...pos };
-
-      const { container, content } = bounds;
-      const minX = Math.min(0, container.width - content.width * scl);
-      const minY = Math.min(0, container.height - content.height * scl);
-      const maxX = Math.max(0, container.width - content.width * scl);
-      const maxY = Math.max(0, container.height - content.height * scl);
-
-      if (content.width * scl <= container.width) {
-        result.x = (container.width - content.width * scl) / 2;
-      } else {
-        result.x = Math.min(maxX, Math.max(minX, pos.x));
-      }
-
-      if (content.height * scl <= container.height) {
-        result.y = (container.height - content.height * scl) / 2;
-      } else {
-        result.y = Math.min(maxY, Math.max(minY, pos.y));
-      }
-
-      return result;
+      return calculateConstrainedPosition(pos, scl, bounds);
     },
     [constrainPan, calculateBounds]
   );

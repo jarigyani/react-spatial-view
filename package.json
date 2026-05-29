@@ -13,7 +13,7 @@
 	"scripts": {
 		"dev": "vite",
 		"build": "rm -rf dist && rollup -c",
-		"lint": "eslint .",
+		"lint": "biome lint src test package.json biome.json rollup.config.mjs vite.config.ts tsconfig.json",
 		"preview": "vite preview",
 		"test": "vitest run",
 		"coverage": "vitest run --coverage"
